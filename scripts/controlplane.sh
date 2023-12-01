@@ -32,6 +32,7 @@ echo "Extracting pod subnet"
 PODSUBNET=$(cat $config_path/cilium-cni.yaml | grep .cluster-pool-ipv4-cidr | yq e '.cluster-pool-ipv4-cidr')
 echo "Getting kubernetes package version"
 VERSION="$(echo ${KUBERNETES_VERSION} | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')"
+sudo rm  $config_path/cilium-cni.yaml
 
 #Preparing for kubeadm init
 
