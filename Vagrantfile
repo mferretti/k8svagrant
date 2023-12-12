@@ -51,6 +51,7 @@ IP_START = Integer(IP_SECTIONS.captures[1])
 NUM_WORKER_NODES = settings["nodes"]["workers"]["count"]
 MASTER_NAME = settings["nodes"]["control"]["name"]
 NODE_NAME = settings["nodes"]["workers"]["name"]
+$default_network_interface = `ip route | awk '/^default/ {printf "%s", $5; exit 0}'`
 
 ##trucco schifoso: vagrant usa nic1 per ssh ma per default k8s lo usa per le comunicazioni
 def nat(config)
@@ -86,6 +87,7 @@ Vagrant.configure("2") do |config|
   config.vm.define "controlplane" do |master|
     master.vm.hostname = MASTER_NAME
     nat(config)
+    config.vm.network "public_network", type: "dhcp", bridge: "#$default_network_interface"
     master.vm.network "private_network", ip: settings["network"]["control_ip"]
     if settings["shared_folders"]
       settings["shared_folders"].each do |shared_folder|
